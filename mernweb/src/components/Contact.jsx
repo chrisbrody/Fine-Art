@@ -1,6 +1,62 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 const Contact = () => {
+
+  const [msg, setMsg] = useState({
+    name : "",
+    email : "",
+    message : ""
+  });
+
+  // Handle Inputs
+  const handleChange = (event) =>{
+    let name = event.target.name;
+    let value = event.target.value;
+
+    setMsg({...msg, [name]:value});
+  }
+
+  // Handle Submit
+  const handleSubmit = async (event)=>{
+    event.preventDefault();
+    // Object DeStructuring
+    // Store Object Data into Variables
+    const {name, email, message} = msg;
+    try {
+      //It is Submitted on port 3000 by default
+      // Which is Front End but we need to
+      // Submit it on Backend which is on
+      // Port 3001. So we need Proxy.
+      const res = await fetch('/message', {
+        method : "POST",
+        headers : {
+          "Content-Type" : "application/json"
+        },
+        body : JSON.stringify({
+          name, email, message
+        })
+      })
+      console.log(res.status)
+      if(res.status === 400 || !res){
+        window.alert("Message Not Sent. Try Again.")
+      }else{
+        // You need to Restart the Server for Proxy Works
+        // Now Try Again
+        window.alert("Message Sent");
+        setMsg({
+          name: "",
+          email: "",
+          message: ""
+        })
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+
+
   return (
     <div>
       <section id="service">
@@ -16,18 +72,24 @@ const Contact = () => {
                 <img src="/assets/contact.jpg" alt="contact" className="w-100" />
               </div>
               <div className="col-md-6">
-                <form>
+                <form onSubmit={handleSubmit} method="POST">
                   <div className="mb-3">
                     <label htmlFor="name" className="form-label">Your Name</label>
-                    <input type="text" className="form-control" id="name" placeholder="John Smith" />
+                    <input type="text" className="form-control" id="name" placeholder="John Smith" name="name"
+                    value={msg.name}
+                    onChange={handleChange} />
                   </div>
                   <div className="mb-3">
                     <label htmlFor="email" className="form-label">Email Address</label>
-                    <input type="email" className="form-control" id="email" placeholder="name@example.com" />
+                    <input type="email" className="form-control" id="email" placeholder="name@example.com" name="email"
+                    value={msg.email}
+                    onChange={handleChange} />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="exampleFormControlTextarea1" className="form-label">Your MEssage</label>
-                    <textarea className="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
+                    <label htmlFor="exampleFormControlTextarea1" className="form-label">Your Message</label>
+                    <textarea className="form-control" id="exampleFormControlTextarea1" rows="5" name="message"
+                    value={msg.message}
+                    onChange={handleChange}></textarea>
                   </div>
                   <button type="submit" className="btn btn-outline-primary rounded-pill px-4">Send Message <i className="fa fa-paper-plane ms-2"></i></button>
                 </form>
