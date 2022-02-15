@@ -47,7 +47,7 @@ const Register = () => {
         // You need to Restart the Server for Proxy Works
         // Now Try Again
         window.alert("Registered Successfully");
-        history.push('/login')
+        history('/login')
       }
     } catch (error) {
       console.log(error);

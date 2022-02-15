@@ -38,8 +38,8 @@ const Login = () => {
         window.alert("Invalid Credentials")
       }else{
         window.alert("Login Successfull");
+        history('/')
         window.location.reload();
-        history.push('/')
         // Token is generated When we Logged In.
         // Now we need to create Schema for Messages
       }
